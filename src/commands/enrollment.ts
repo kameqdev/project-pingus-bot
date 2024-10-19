@@ -22,5 +22,13 @@ export default {
                 )]
             })
         }
+        await interaction.showModal(new ModalBuilder()
+            .setCustomId('enrollment')
+            .setTitle('Utwórz zapisy')
+            .addComponents(
+                new ActionRowBuilder<TextInputBuilder>().addComponents(TextInputBuilder.from({ custom_id: 'title', type: 4, label: "Tytuł", style: 1 })),
+                new ActionRowBuilder<TextInputBuilder>().addComponents(TextInputBuilder.from({ custom_id: 'content', type: 4, label: "Treść", style: 2 })),
+                new ActionRowBuilder<TextInputBuilder>().addComponents(TextInputBuilder.from({ custom_id: 'date', type: 4, label: "Data", style: 1, min_length: 16, max_length: 16, placeholder: "YYYY-MM-DD HH:mm", required: false }))
+        ))
     }
 }

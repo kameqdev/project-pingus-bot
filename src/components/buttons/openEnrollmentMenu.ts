@@ -1,16 +1,22 @@
 import { ButtonStyle, StringSelectMenuInteraction, ButtonInteraction, ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, StringSelectMenuOptionBuilder } from 'npm:discord.js'
 import { FormatText, TextToOptions, RemoveMember, AddMember } from '../../utils/enrollment.ts'
-import type { CollectedInteraction } from 'npm:discord.js';
 
 
 const CollectorInteractions = {
     'enrollment-select': async (interaction: StringSelectMenuInteraction, baseInteraction: ButtonInteraction) => {
         const options = TextToOptions(baseInteraction.message.content)
         const line = +interaction.values[0]
+
+        if (options.map(option => option.memberID).includes(interaction.user.id))
+            return interaction.update({
+                content: `**❌ | Jesteś już zapisany**`,
+                components: []
+            }).then(i => setTimeout(() => i.delete(), 3_000))
+
         if (options.find(option => option.line === line)?.memberID)
-            return interaction.reply({
-                ephemeral: true,
-                content: `**❌ | Miejsce jest już zajęte`
+            return interaction.update({
+                content: `**❌ | Miejsce jest już zajęte**`,
+                components: []
             }).then(i => setTimeout(() => i.delete(), 3_000))
             
         await baseInteraction.message.edit({

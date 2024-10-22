@@ -1,4 +1,3 @@
-// deno-lint-ignore-file no-explicit-any
 import { Client, REST, Routes } from 'npm:discord.js'
 import { Command, Component } from './types.ts'
 
@@ -12,7 +11,7 @@ async function registerCommands(commands: string[]) {
 		const data = await rest.put(
 			Routes.applicationGuildCommands(Deno.env.get('CLIENT_ID') as string, Deno.env.get('GUILD_ID') as string),
 			{ body: commands },
-		) as any[];
+		) as unknown[];
 
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`)
 	} catch (error) { console.error(error) }

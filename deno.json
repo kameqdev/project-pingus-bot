@@ -1,0 +1,7 @@
+{
+    "tasks": {
+      "start": "deno run --env -A src/index.ts",
+      "debug": "deno run --env -A --watch src/index.ts",
+      "pm2": "pm2 start src/index.ts --interpreter=\"deno\" --interpreter-args=\"task start\""
+    }
+}

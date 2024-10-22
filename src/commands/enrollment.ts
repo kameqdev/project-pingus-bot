@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, ComponentType, ChannelType, ActionRowBuilder, ChannelSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'npm:discord.js'
+import { ChatInputCommandInteraction, ChannelType, ActionRowBuilder, ChannelSelectMenuBuilder, ModalBuilder, TextInputBuilder } from 'npm:discord.js'
 
 export default {
     data: {
@@ -9,7 +9,8 @@ export default {
         },
         descriptionLocalizations: {
             pl: 'Utwórz zapisy'
-        }
+        },
+        default_member_permissions: '8' // administrator
     },
     async execute(interaction: ChatInputCommandInteraction) {
         const config = await import(`../config.json?${Date.now()}`, { with: { type: 'json' } }).then(json => json.default)

@@ -11,7 +11,7 @@ export default {
             try { command.execute(interaction) }
             catch (err) { console.error(err) }
         } else if (interaction.isButton() || interaction.isModalSubmit() || interaction.isAnySelectMenu()) {
-            const component = client.components.get(interaction.customId)
+            const component = client.components.get(interaction.customId.split(':')[0])
             if (!component) return new Error('There is no code for this component')
             try { component.execute(interaction) }
             catch (err) { console.error(err) }

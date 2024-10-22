@@ -1,5 +1,5 @@
-import { ModalSubmitInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, ForumChannel, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from "npm:discord.js"
-import { FormatText, TextToOptions } from '../../utils/enrollment.ts'
+import { ModalSubmitInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, ForumChannel } from "npm:discord.js"
+import { FormatText } from '../../utils/enrollment.ts'
 
 const ButtonInteractions = {
     'accept-enrollment': async (baseInteraction: ModalSubmitInteraction) => {
@@ -8,21 +8,10 @@ const ButtonInteractions = {
         const config = await import(`../../config.json?${Date.now()}`, { with: { type: 'json' } }).then(json => json.default)
         const text = baseInteraction.fields.getTextInputValue('content')
         const channel: ForumChannel = await baseInteraction.guild?.channels.fetch(config.forumChannel) as ForumChannel
-        
-        // const selectMenu = new StringSelectMenuBuilder()
-        // .setCustomId('enrollment')
-        // .setPlaceholder(textToOptions(text).length ? 'Wybierz klasę' : 'Zapisy niedostępne')
-        // .setDisabled(!textToOptions(text).length)
-        // if (textToOptions(text).length) selectMenu.addOptions(...textToOptions(text).filter(options => !options.memeberID).map(option => 
-        //     new StringSelectMenuOptionBuilder()
-        //         .setLabel(option.class)
-        //         .setDescription(option.platoon)
-        //         .setValue(option.line.toString())))
-        // else selectMenu.addOptions(new StringSelectMenuOptionBuilder().setLabel('label').setDescription('description').setValue('value')) // necessary placeholder data to send selectmenu  
+
         const openEnrollmentMenuBtn = new ButtonBuilder()
             .setCustomId('open-enrollment-menu')
-            .setDisabled(!TextToOptions(text).length)
-            .setLabel(TextToOptions(text).length ? 'Otwórz menu zapisów' : 'Zapisy niedostępne')
+            .setLabel('Otwórz menu zapisów')
             .setStyle(ButtonStyle.Secondary)
 
         const date = baseInteraction.fields.getTextInputValue('date')
@@ -43,7 +32,7 @@ const ButtonInteractions = {
             setTimeout(async () => {
                 try {
                     const message = await threadChannel.messages.fetch().then(messages => messages.first())
-                    const IDs = message?.content.matchAll(/<@\d*>/g)
+                    const IDs = message?.content.matchAll(/<@\d+>/gm)
                     if (!IDs) return
                     const content = Array.from(IDs, match => match[0]).join("\n")
                     if (!content) return
@@ -57,27 +46,6 @@ const ButtonInteractions = {
             components: []
         }).then(() => setTimeout(() => baseInteraction.deleteReply(), 5_000))
     },
-    // 'edit-enrollment': async (baseInteraction: ModalSubmitInteraction) => {
-    //     const interactionResponse = await interaction.showModal(new ModalBuilder()
-    //         .setCustomId('enrollment')
-    //         .setTitle('Utwórz zapisy')
-    //         .addComponents(
-    //             new ActionRowBuilder<TextInputBuilder>().addComponents(TextInputBuilder.from({ custom_id: 'content', type: 4, label: "Treść", style: 2 })),
-    //             new ActionRowBuilder<TextInputBuilder>().addComponents(TextInputBuilder.from({ custom_id: 'date', type: 4, label: "Data", style: 1, min_length: 16, max_length: 16, placeholder: "dd-mm-rrrr hh:mm", required: false }))
-    //     ))
-
-    //     const modalSubmitInteraction = await interaction.awaitModalSubmit({ time: 10 * 60_000 }).catch(async () => {
-    //         await interaction.editReply({
-    //             content: 'Przekroczono czas oczekiwania',
-    //             components: []
-    //         }).then(res => setTimeout(() => res.delete(), 3_000))
-    //         return null
-    //     })
-
-    //     if (!modalSubmitInteraction) return
-
-    //     modalSubmitInteraction.fields.getTextInputValue('content')
-    // },
     'reject-enrollment': async (baseInteraction: ModalSubmitInteraction) => {
         await baseInteraction.editReply({
             content: '**❌ | Anulowano tworzenie zapisów**',
@@ -95,11 +63,6 @@ export default {
             .setCustomId('accept-enrollment')
             .setLabel('Zatwierdź')
             .setStyle(ButtonStyle.Success)
-        // const editBtn = new ButtonBuilder()
-        //     .setCustomId('edit-enrollment')
-            // .setEmoji()
-            // .setLabel('Edytuj')
-            // .setStyle(ButtonStyle.Secondary)
         const rejectBtn = new ButtonBuilder()
             .setCustomId('reject-enrollment')
             .setLabel('Anuluj')

@@ -23,7 +23,7 @@ export default {
             })
         }
         await interaction.showModal(new ModalBuilder()
-            .setCustomId('enrollment')
+            .setCustomId('enrollment-modal')
             .setTitle('Utwórz zapisy')
             .addComponents(
                 new ActionRowBuilder<TextInputBuilder>().addComponents(TextInputBuilder.from({ custom_id: 'title', type: 4, label: "Tytuł", style: 1 })),

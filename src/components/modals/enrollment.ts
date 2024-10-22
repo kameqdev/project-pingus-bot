@@ -25,19 +25,21 @@ const ButtonInteractions = {
             .setLabel(TextToOptions(text).length ? 'Otwórz menu zapisów' : 'Zapisy niedostępne')
             .setStyle(ButtonStyle.Secondary)
 
+        const date = baseInteraction.fields.getTextInputValue('date')
+        const now = new Date().getTime()
+        const runAt = new Date(date).getTime()
+        const isDateValid = runAt > now
+
         const threadChannel = await channel.threads.create({
             name: baseInteraction.fields.getTextInputValue('title'),
             message: {
-                content: FormatText(text),
+                content: FormatText(text) + (isDateValid ? `\n-# Powiadomienie zaplanowane na: <t:${Math.floor(runAt / 1000)}:f>` : ''),
                 components: [new ActionRowBuilder<ButtonBuilder>().addComponents(openEnrollmentMenuBtn)]
             }
         })
         
         // Create timer to send notification in given date, if valid date provided
-        const date = baseInteraction.fields.getTextInputValue('date')
-        const now = new Date().getTime()
-        const runAt = new Date(date).getTime()
-        if (runAt > now) {
+        if (isDateValid) {
             setTimeout(async () => {
                 try {
                     const message = await threadChannel.messages.fetch().then(messages => messages.first())
@@ -87,7 +89,7 @@ const ButtonInteractions = {
 
 
 export default {
-    customId: 'enrollment',
+    customId: 'enrollment-modal',
     execute: async (interaction: ModalSubmitInteraction) => {
         const acceptBtn = new ButtonBuilder()
             .setCustomId('accept-enrollment')

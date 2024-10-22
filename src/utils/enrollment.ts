@@ -1,7 +1,7 @@
 type EnrollmentOption = {
     platoon: string,
     class: string,
-    memeberID: string | undefined,
+    memberID: string | undefined,
     line: number
 }
 
@@ -21,10 +21,17 @@ export const TextToOptions = (content: string): EnrollmentOption[] => {
         options.push({
             platoon: platoons.filter(platoon => platoon.index < element.index).sort((a, b) => b.index - a.index)[0].name,
             class: element[2],
-            memeberID: element[1],
-            line: content.substring(0, element.index).split('\n').length
+            memberID: element[1],
+            line: content.substring(0, element.index).split('\n').length - 1
         })
     }
 
     return options
+}
+
+export const RemoveMember = (content: string, memberID: string): string => content.replace(`<@${memberID}> - `, '')
+export const AddMember = (content: string, memberID: string, line: number): string => {
+    const lines = content.split('\n')
+    lines[line] = lines[line].replace(/(.*)/, `- <@${memberID}> $1`)
+    return lines.join('\n')
 }

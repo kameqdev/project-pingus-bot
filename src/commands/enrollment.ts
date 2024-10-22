@@ -13,7 +13,7 @@ export default {
     },
     async execute(interaction: ChatInputCommandInteraction) {
         const config = await import(`../config.json?${Date.now()}`, { with: { type: 'json' } }).then(json => json.default)
-        if (!config.forumChannel) {
+        if (!config.forumChannel || !interaction.guild?.channels.resolve(config.forumChannel)) {
             return interaction.reply({
                 ephemeral: true,
                 content: '**⚠️ | Ustaw najpierw kanał z zapisami**',
